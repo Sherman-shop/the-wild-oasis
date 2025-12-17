@@ -66,12 +66,12 @@ export default function MainNav() {
       </li>
       <li><StyledNavLink to="/cabins">
       <HiOutlineCalendarDays />
-      <span>Bookings</span>
+      <span>Cabins</span>
       </StyledNavLink>
       </li>
       <li><StyledNavLink to="/users">
       <HiOutlineUsers />
-      <span>Bookings</span>
+      <span>User</span>
       </StyledNavLink>
       </li>
       <li><StyledNavLink to="/settings">

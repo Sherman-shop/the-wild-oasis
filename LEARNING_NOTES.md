@@ -79,3 +79,46 @@ ${(props) => sizes[props.size]}
 *   **不要用 `href`**：在 React Router 中，永远使用 `to` 属性。`href` 会导致页面刷新，状态丢失。
 *   **布局遮挡**：Grid 布局中要注意组件顺序。如果 Sidebar 没设置好 Grid 区域且放在了 Header 后面，可能会被挤到错误的位置遮挡内容。
 *   **路由残留**：如果浏览器地址栏手动输入了错误的 URL（如 `/account`），即使代码改对了，页面可能还是显示旧的组件。记得手动改回 `/dashboard` 测试。
+
+---
+
+**日期**：2025年12月17日
+**技术栈**：Supabase, API Integration, useEffect
+
+## 5. 后端集成与数据获取 (Supabase)
+
+将前端应用与 Supabase 后端进行了对接。
+
+### A. 核心原理：BaaS (Backend as a Service)
+我没有自己写 Node.js 后端，而是使用了 Supabase。
+*   **Supabase** 提供了现成的数据库（PostgreSQL）、API、身份验证等服务。
+*   前端直接通过 `supabase-js` 客户端库与数据库通信，就像调用本地函数一样简单。
+
+### B. 连接流程 (Workflow)
+1.  **初始化客户端** (`src/services/supabase.js`)：
+    *   引入 `createClient`。
+    *   配置 `supabaseUrl` 和 `supabaseKey`。
+    *   导出 `supabase` 实例供全局使用。
+2.  **创建 API 服务** (`src/services/apiCabins.js`)：
+    *   编写 `getCabins` 异步函数。
+    *   使用 `await supabase.from('cabins').select('*')` 获取数据。
+    *   处理可能出现的错误。
+3.  **组件调用** (`src/pages/Cabins.jsx`)：
+    *   使用 `useEffect` 钩子，确保只在组件挂载（Mount）时请求一次数据。
+    *   调用 `getCabins()` 并在控制台打印结果进行测试。
+
+### C. 代码片段
+```javascript
+// apiCabins.js
+export async function getCabins() {
+  const { data, error } = await supabase.from('cabins').select('*');
+  if (error) throw new Error("Cabins could not be loaded");
+  return data;
+}
+```
+
+### D. 下一步计划
+目前只是把数据打印到了控制台（Console）。下一步需要：
+1.  把数据存入 React 状态（State）。
+2.  处理加载状态（Loading）。
+3.  使用 React Query 来更优雅地管理这些服务器状态（Server State）。
