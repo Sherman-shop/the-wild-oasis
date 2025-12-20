@@ -1,25 +1,17 @@
-import styled from "styled-components";
-import {css} from "styled-components";
+import styled, { css } from "styled-components";
 
-const Row= styled.div`
-    display:flex;
+const Row = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
 
-${(props) =>
+  ${(props) =>
     props.type === "horizontal" &&
     css`
-        justify-content: space-between;
-        align-items:center;
-    `}  
-
-${(props) =>
-    props.type === "vertical" &&
-    css`
-        justify-content: column;
-        gap: 1.6rem;
-    `}  
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    `}
 `;
 
-Row.defaultProps = {
-    type: "vertical",
-};
 export default Row;
