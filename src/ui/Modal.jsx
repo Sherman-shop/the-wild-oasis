@@ -3,8 +3,6 @@ import { HiXMark } from "react-icons/hi2";
 import { createPortal } from "react-dom";
 import { cloneElement, createContext } from "react";
 import { useState, useContext } from "react";
-import { useEffect } from "react";
-import { useRef } from "react";
 import useOutsideClick from "../hooks/useOutsideClick.js";
 
 
