@@ -32,12 +32,12 @@ async function deleteBookings() {
 
 async function createGuests() {
   const { error } = await supabase.from("guests").insert(guests);
-  if (error) console.log(error.message);
+  if (error) throw new Error("Guests could not be created");
 }
 
 async function createCabins() {
   const { error } = await supabase.from("cabins").insert(cabins);
-  if (error) console.log(error.message);
+  if (error) throw new Error("Cabins could not be created");
 }
 
 async function createBookings() {
@@ -46,11 +46,17 @@ async function createBookings() {
     .from("guests")
     .select("id")
     .order("id");
+  
+  console.log("Guests IDs fetched:", guestsIds);
+  
   const allGuestIds = guestsIds.map((cabin) => cabin.id);
   const { data: cabinsIds } = await supabase
     .from("cabins")
     .select("id")
     .order("id");
+  
+  console.log("Cabins IDs fetched:", cabinsIds);
+
   const allCabinIds = cabinsIds.map((cabin) => cabin.id);
 
   const finalBookings = bookings.map((booking) => {
@@ -82,11 +88,13 @@ async function createBookings() {
     )
       status = "checked-in";
 
+    const { isPaid, ...bookingWithoutIsPaid } = booking;
+
     return {
-      ...booking,
+      ...bookingWithoutIsPaid,
       numNights,
       cabinPrice,
-      extrasPrice,
+      // extrasPrice,
       totalPrice,
       guestId: allGuestIds.at(booking.guestId - 1),
       cabinId: allCabinIds.at(booking.cabinId - 1),
@@ -97,7 +105,10 @@ async function createBookings() {
   console.log(finalBookings);
 
   const { error } = await supabase.from("bookings").insert(finalBookings);
-  if (error) console.log(error.message);
+  if (error) {
+    console.error(error.message);
+    throw new Error("Bookings could not be created: " + error.message);
+  }
 }
 
 function Uploader() {
@@ -105,23 +116,35 @@ function Uploader() {
 
   async function uploadAll() {
     setIsLoading(true);
-    // Bookings need to be deleted FIRST
-    await deleteBookings();
-    await deleteGuests();
-    await deleteCabins();
+    try {
+      // Bookings need to be deleted FIRST
+      await deleteBookings();
+      await deleteGuests();
+      await deleteCabins();
 
-    // Bookings need to be created LAST
-    await createGuests();
-    await createCabins();
-    await createBookings();
+      // Bookings need to be created LAST
+      await createGuests();
+      await createCabins();
+      await createBookings();
 
+      alert("Data uploaded successfully");
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
     setIsLoading(false);
   }
 
   async function uploadBookings() {
     setIsLoading(true);
-    await deleteBookings();
-    await createBookings();
+    try {
+      await deleteBookings();
+      await createBookings();
+      alert("Bookings uploaded successfully");
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
     setIsLoading(false);
   }
 
