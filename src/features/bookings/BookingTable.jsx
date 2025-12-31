@@ -9,9 +9,9 @@ import Spinner from "../../ui/Spinner";
 function BookingTable() {
   const {bookings, isLoading, count} = useBookings();
 
-  if (isLoading) return <Spinner />;
-
   if(!bookings.length) return <Empty resourceName="bookings" />;
+
+  if (isLoading) return <Spinner />;
 
   return (
     <Menus>
