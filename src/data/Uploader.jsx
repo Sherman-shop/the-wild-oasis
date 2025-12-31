@@ -47,16 +47,12 @@ async function createBookings() {
     .select("id")
     .order("id");
   
-  console.log("Guests IDs fetched:", guestsIds);
-  
   const allGuestIds = guestsIds.map((cabin) => cabin.id);
   const { data: cabinsIds } = await supabase
     .from("cabins")
     .select("id")
     .order("id");
   
-  console.log("Cabins IDs fetched:", cabinsIds);
-
   const allCabinIds = cabinsIds.map((cabin) => cabin.id);
 
   const finalBookings = bookings.map((booking) => {
@@ -88,7 +84,7 @@ async function createBookings() {
     )
       status = "checked-in";
 
-    const { isPaid, ...bookingWithoutIsPaid } = booking;
+    const { isPaid: _isPaid, ...bookingWithoutIsPaid } = booking;
 
     return {
       ...bookingWithoutIsPaid,
@@ -101,8 +97,6 @@ async function createBookings() {
       status,
     };
   });
-
-  console.log(finalBookings);
 
   const { error } = await supabase.from("bookings").insert(finalBookings);
   if (error) {
